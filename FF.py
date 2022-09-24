@@ -165,6 +165,8 @@ def updateWalls(x,y,orient,L,R,F):
 
     else:
         cells[y][x]= 15
+    for i in reversed(cells):
+        print(i)
 #done
 def isAccessible(x,y,x1,y1):
     '''returns True if mouse can move to x1,y1 from x,y (two adjescent cells)
@@ -509,7 +511,7 @@ def show():#flood,variable
                     
             #API.setText(x,y,a)
             #API.setText(x,y,str(x0)+str(y0)+str(x1)+str(y1)+str(x2)+str(y2)+str(x3)+str(y3))
-            API.setText(x,y,str(flood[y][x]))
+            #API.setText(x,y,str(flood[y][x]))
             #API.setText(x,y,str(variable))
 
 def center(x,y,orient):
@@ -673,6 +675,7 @@ def main():
             R= API.wallRight()
             F= API.wallFront()
             updateWalls(x,y,orient,L,R,F)
+            
 
             if (flood[y][x]!=0):
                 
@@ -782,7 +785,7 @@ def main():
     except API.MouseCrashedError:
         log("crashed")
         pass
-        #return to start
+        
 
     #backToStart(x,y,xprev,yprev,orient,state)
     shortestPath(x,y,xprev,yprev,orient,state)
@@ -831,3 +834,4 @@ def shortestPath(x,y,xprev,yprev,orient,state):
 
 if __name__ == "__main__":
     main()
+
