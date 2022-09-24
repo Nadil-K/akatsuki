@@ -1,3 +1,4 @@
+
 import sys
 import RPi.GPIO as GPIO
 import time
@@ -57,8 +58,9 @@ def getDistance1():
     GPIO.output(PIN_TRIGGER1, GPIO.LOW)
     time.sleep(0.00001)
     
+    pulse1_end_time = None
     # Measure time
-    while GPIO.input(PIN_ECHO1)==0:
+    while GPIO.input(PIN_ECHO1)==0 or pulse1_end_time ==None :
         pulse1_start_time = time.time()
     while GPIO.input(PIN_ECHO1)==1:
         pulse1_end_time = time.time()
@@ -75,9 +77,9 @@ def getDistance2():
     # Set trigger low
     GPIO.output(PIN_TRIGGER2, GPIO.LOW)
     time.sleep(0.00001)
-    
+    pulse2_end_time = None
     # Measure time
-    while GPIO.input(PIN_ECHO2)==0:
+    while GPIO.input(PIN_ECHO2)==0 or pulse2_end_time ==None :
         pulse2_start_time = time.time()
     while GPIO.input(PIN_ECHO2)==1:
         pulse2_end_time = time.time()
@@ -95,8 +97,9 @@ def getDistance3():
     GPIO.output(PIN_TRIGGER3, GPIO.LOW)
     time.sleep(0.00001)
     
+    pulse3_end_time = None
     # Measure time
-    while GPIO.input(PIN_ECHO3)==0:
+    while GPIO.input(PIN_ECHO3)==0 or pulse3_end_time ==None :
         pulse3_start_time = time.time()
     while GPIO.input(PIN_ECHO3)==1:
         pulse3_end_time = time.time()
@@ -114,8 +117,9 @@ def getDistance4():
     GPIO.output(PIN_TRIGGER4, GPIO.LOW)
     time.sleep(0.00001)
     
+    pulse4_end_time = None
     # Measure time
-    while GPIO.input(PIN_ECHO4)==0:
+    while GPIO.input(PIN_ECHO4)==0 and pulse4_end_time ==None :
         pulse4_start_time = time.time()
     while GPIO.input(PIN_ECHO4)==1:
         pulse4_end_time = time.time()
@@ -136,4 +140,3 @@ while (True):
     print("Back:",distance4,"cm", checkFaceWall(distance4))
     time.sleep(0.1)    
 
-GPIO.cleanup()
