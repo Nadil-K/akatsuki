@@ -294,7 +294,13 @@ def moveForward():
     duration = 0.299
     #correction=keepStraight()
     initialDistance=getDistance1()
-    error = getDistance2() - getDistance3()
+    dist2 = getDistance2()
+    if (dist2 > 7):
+        dist = 3.5
+    dist3 = getDistance3()
+    if (dist3 > 7):
+        dist = 3.5
+    error = dist2 - dist3
     leftSpeed, rightSpeed = PID.pid_controller(error)
     
     GPIO.output(DIR1,GPIO.HIGH)
