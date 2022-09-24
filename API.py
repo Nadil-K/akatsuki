@@ -283,9 +283,14 @@ def holt(duration):
     time.sleep(duration)
     holt(1)'''
 
-def pause(initial):
+def pause1(initial):
     while(True):
         if((initial-getDistance1())>=11):
+            break
+    
+def pause2():
+    while(True):
+        if(getDistance1()<=1.5):
             break
 
 def moveForward():
@@ -294,13 +299,7 @@ def moveForward():
     duration = 0.299
     #correction=keepStraight()
     initialDistance=getDistance1()
-    dist2 = getDistance2()
-    if (dist2 > 7):
-        dist = 3.5
-    dist3 = getDistance3()
-    if (dist3 > 7):
-        dist = 3.5
-    error = dist2 - dist3
+    error = getDistance2() - getDistance3()
     leftSpeed, rightSpeed = PID.pid_controller(error)
     
     GPIO.output(DIR1,GPIO.HIGH)
@@ -312,13 +311,23 @@ def moveForward():
     GPIO.output(DIR7,GPIO.HIGH)
     GPIO.output(DIR8,GPIO.LOW)
 
-    pwm1.start(leftSpeed)#baseSpeed+correction)
-    pwm2.start(rightSpeed)#baseSpeed-correction)
-    pwm3.start(leftSpeed)#baseSpeed+correction)
-    pwm4.start(rightSpeed)#baseSpeed-correction)
+    if(getDistance1()>16):
+        pwm1.start(leftSpeed)#baseSpeed+correction)
+        pwm2.start(rightSpeed)#baseSpeed-correction)
+        pwm3.start(leftSpeed)#baseSpeed+correction)
+        pwm4.start(rightSpeed)#baseSpeed-correction)    
+    else:
+        pwm1.start(10)#baseSpeed+correction)
+        pwm2.start(10)#baseSpeed-correction)
+        pwm3.start(10)#baseSpeed+correction)
+        pwm4.start(10)#baseSpeed-correction)  
 
+    if(getDistance1()>16):
+        pause1(initialDistance)
+    else:
+        pause2()
     #pause(initialDistance)
-    time.sleep(0.5)
+    #time.sleep(0.5)
     holt(1)
     '''if((getDistance2()-getDistance3())>1):
         turnLeft(0.02)
@@ -417,4 +426,3 @@ def ackReset():
 
 def log(string):
     sys.stderr.write("{}\n".format(string))
-
