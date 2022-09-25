@@ -1,11 +1,14 @@
+import time
 from warnings import catch_warnings
-import API
+import NewAPI
 import sys
 
 x=0
 y=0
 orient=0
 cell = 0
+cond1=False
+cond2=False
 
 cells =    [[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -506,66 +509,66 @@ def show():#flood,variable
                 a+=str(x3)
                 a+=str(y3)'''
                     
-            #API.setText(x,y,a)
-            #API.setText(x,y,str(x0)+str(y0)+str(x1)+str(y1)+str(x2)+str(y2)+str(x3)+str(y3))
-            #API.setText(x,y,str(flood[y][x]))
-            #API.setText(x,y,str(variable))
+            #NewAPI.setText(x,y,a)
+            #NewAPI.setText(x,y,str(x0)+str(y0)+str(x1)+str(y1)+str(x2)+str(y2)+str(x3)+str(y3))
+            #NewAPI.setText(x,y,str(flood[y][x]))
+            #NewAPI.setText(x,y,str(variable))
 
 def center(x,y,orient):
-    L= API.wallLeft()
-    R= API.wallRight()
-    F= API.wallFront()
+    L= NewAPI.wallLeft()
+    R= NewAPI.wallRight()
+    F= NewAPI.wallFront()
 
     if (L):
         updateWalls(x,y,orient,L,R,F)
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
 
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
 
-        API.turnRight()
+        NewAPI.turnRight()
         orient = orientation(orient,'R')
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
         
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
 
-        API.turnRight()
+        NewAPI.turnRight()
         orient = orientation(orient,'R')
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
 
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
 
-        API.turnRight()
+        NewAPI.turnRight()
         orient = orientation(orient,'R')
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
 
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
         
         return (x,y,xprev,yprev,orient)
@@ -573,53 +576,53 @@ def center(x,y,orient):
     else:
         updateWalls(x,y,orient,L,R,F)
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
 
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
 
-        API.turnLeft()
+        NewAPI.turnLeft()
         orient = orientation(orient,'L')
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
         
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
 
-        API.turnLeft()
+        NewAPI.turnLeft()
         orient = orientation(orient,'L')
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
 
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
 
-        API.turnLeft()
+        NewAPI.turnLeft()
         orient = orientation(orient,'L')
 
-        API.moveForward()
+        NewAPI.moveForward()
         xprev=x
         yprev=y
         x,y = updateCoordinates(x,y,orient)
 
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         updateWalls(x,y,orient,L,R,F)
 
         return (x,y,xprev,yprev,orient)
@@ -657,8 +660,8 @@ def appendDestination(x,y):#Flood
     queue.append(x)
 
 def main():
-    while(API.startUp):
-        continue
+    #while(NewAPI.startUp()):
+    #    continue
     x=0
     y=0
     xprev=0
@@ -669,10 +672,10 @@ def main():
 
     try:
         while True:
-            API.setColor(x, y, 'red')
-            L= API.wallLeft()
-            R= API.wallRight()
-            F= API.wallFront()
+            NewAPI.setColor(x, y, 'red')
+            L= NewAPI.wallLeft()
+            R= NewAPI.wallRight()
+            F= NewAPI.wallFront()
             updateWalls(x,y,orient,L,R,F)
             
 
@@ -762,49 +765,47 @@ def main():
                 direction= toMove(flood,x,y,xprev,yprev,orient)
             
             if (direction=='L'):
-                API.turnLeft()
+                NewAPI.turnLeft()
                 orient = orientation(orient,'L')
 
             elif (direction=='R'):
-                API.turnRight()
+                NewAPI.turnRight()
                 orient = orientation(orient,'R')
 
             elif (direction=='B'):
-                API.turnLeft()
+                NewAPI.turnLeft()
                 orient = orientation(orient,'L')
-                API.turnLeft()
+                NewAPI.turnLeft()
                 orient = orientation(orient,'L')
 
 
             show()
-            if(API.startUp):
-                main()
+            if(NewAPI.startUp):
+                return
             else:
-                API.moveForward()
+                NewAPI.moveForward()
                 xprev=x
                 yprev=y
                 x,y = updateCoordinates(x,y,orient)
-    except API.MouseCrashedError:
+    except NewAPI.MouseCrashedError:
         log("crashed")
         pass
-        
-
+    
+    return xprev,yprev,state
+    cond=True
     #backToStart(x,y,xprev,yprev,orient,state)
-    while(!API.reset):
-        continue
-    shortestPath(x,y,xprev,yprev,orient,state)
 
 #done
 def shortestPath(x,y,xprev,yprev,orient,state):
     #floodFill2(flood2)
-    while(API.reset):
+    while(NewAPI.startUp()):
         continue
     
     while True:
         show()#flood2,state
-        L= API.wallLeft()
-        R= API.wallRight()
-        F= API.wallFront()
+        L= NewAPI.wallLeft()
+        R= NewAPI.wallRight()
+        F= NewAPI.wallFront()
         #updateWalls(x,y,orient,L,R,F)
 
         if (flood2[y][x]!=1):
@@ -812,34 +813,36 @@ def shortestPath(x,y,xprev,yprev,orient,state):
 
         
             if (direction=='L'):
-                API.turnLeft()
+                NewAPI.turnLeft()
                 orient = orientation(orient,'L')
 
             elif (direction=='R'):
-                API.turnRight()
+                NewAPI.turnRight()
                 orient = orientation(orient,'R')
 
             elif (direction=='B'):
-                API.turnLeft()
+                NewAPI.turnLeft()
                 orient = orientation(orient,'L')
-                API.turnLeft()
+                NewAPI.turnLeft()
                 orient = orientation(orient,'L')
 
             show()
-            if(API.reset):
-                shortestPath(x,y,xprev,yprev,orient,state)
+            if(NewAPI.reset()):
+                return
             else:
-                API.moveForward()
+                NewAPI.moveForward()
                 xprev=x
                 yprev=y
                 x,y = updateCoordinates(x,y,orient)
+                cond2=True
         else:
             break
     return
 
 
 if __name__ == "__main__":
-    while(!API.startUp):
-        continue
-    main()
-
+    while(not cond1):
+        time.sleep(5)
+        xprev,yprev,state=main()
+    while(not cond2):
+        shortestPath(x,y,xprev,yprev,orient,state)
