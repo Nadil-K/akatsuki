@@ -1,13 +1,13 @@
 previousError, cumError = 0, 0
-base_speed = 25
-max_change = 25
-
+base_speed = 40
+max_change = 40
 p = -0.6 #-0.6
 i = 0.01 #0.001
 d = -0.35 #-0.35
 # Works when the robot is initially centered
 
 def pid_controller(error):
+    #max_change = base_speed
     global previousError, cumError
     # error is left distance - right distance
 

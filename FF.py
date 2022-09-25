@@ -1,6 +1,5 @@
-
-
-
+import RPi.GPIO as GPIO
+import time
 from warnings import catch_warnings
 import API
 import sys
@@ -658,8 +657,18 @@ def appendDestination(x,y):#Flood
 
     queue.append(y)
     queue.append(x)
+'''    
+BUTTON_PIN = API.startUp
+GPIO.setmode(GPIO.BCM)
 
-def main():
+GPIO.setup(BUTTON_PIN,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(BUTTON_PIN,GPIO.RISING,
+                      callback=main,
+                      bouncetime=50)
+'''
+def main():#channel):
+    '''while(API.startUp):
+        continue'''
     x=0
     y=0
     xprev=0
@@ -778,24 +787,34 @@ def main():
 
 
             show()
+            '''if(API.startUp):
+                main()
+            else:
+                API.moveForward()
+                xprev=x
+                yprev=y
+                x,y = updateCoordinates(x,y,orient)'''
             API.moveForward()
             xprev=x
             yprev=y
             x,y = updateCoordinates(x,y,orient)
+            
     except API.MouseCrashedError:
         log("crashed")
         pass
         
 
     #backToStart(x,y,xprev,yprev,orient,state)
+    #while(!API.reset):
+    #    continue
     shortestPath(x,y,xprev,yprev,orient,state)
-
-
 
 #done
 def shortestPath(x,y,xprev,yprev,orient,state):
     #floodFill2(flood2)
-
+    #while(API.reset):
+     #   continue
+    
     while True:
         show()#flood2,state
         L= API.wallLeft()
@@ -822,11 +841,19 @@ def shortestPath(x,y,xprev,yprev,orient,state):
                 orient = orientation(orient,'L')
 
             show()
+            '''if(API.reset):
+                shortestPath(x,y,xprev,yprev,orient,state)
+            else:
+                API.moveForward()
+                xprev=x
+                yprev=y
+                x,y = updateCoordinates(x,y,orient)'''
+            if(API.shortestPath):
+                return
             API.moveForward()
             xprev=x
             yprev=y
             x,y = updateCoordinates(x,y,orient)
-
         else:
             break
     return
@@ -834,4 +861,10 @@ def shortestPath(x,y,xprev,yprev,orient,state):
 
 if __name__ == "__main__":
     main()
-
+    
+        
+        
+#try:
+#    G        
+#except KeyboardInterrupt:
+ #       GPIO.cleanup()
