@@ -2,7 +2,12 @@ import sys
 import RPi.GPIO as GPIO
 import time
 import PID
+#import adafruit_mpu6050
+#import board
+# import GYRO
 #from simple_pid import PID
+
+
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -11,10 +16,10 @@ mode=GPIO.getmode()
 #pid.set_point(3.5)
 #pid.output_limits=(0,1)
 
-faceWallThreshold = 1.5
-sideWallThreshold = 7
+faceWallThreshold = 2
+sideWallThreshold = 6
 
-baseSpeed = 80
+baseSpeed = 80 
 
 PIN_TRIGGER1 = 11
 PIN_ECHO1 = 33
@@ -25,6 +30,8 @@ PIN_ECHO3 = 22
 PIN_TRIGGER4 = 15
 PIN_ECHO4 = 35
 
+start=21
+shortestpath=23
 
 GPIO.setup(PIN_TRIGGER1, GPIO.OUT)
 GPIO.setup(PIN_ECHO1, GPIO.IN)
@@ -34,6 +41,11 @@ GPIO.setup(PIN_TRIGGER3, GPIO.OUT)
 GPIO.setup(PIN_ECHO3, GPIO.IN)
 GPIO.setup(PIN_TRIGGER4, GPIO.OUT)
 GPIO.setup(PIN_ECHO4, GPIO.IN)
+
+GPIO.setup(start, GPIO.IN)
+GPIO.setup(shortestpath, GPIO.IN)
+
+
 
 
 DIR1=38; #FLB
@@ -49,7 +61,7 @@ PWM2=19; #M2 Front Right
 PWM3=12; #M3 Back Left
 PWM4=18; #M4 Back Right
 
-GPIO.setmode(GPIO.BOARD)
+#GPIO.setmode(GPIO.BOARD)
 
 GPIO.setup(DIR1,GPIO.OUT)
 GPIO.setup(DIR2,GPIO.OUT)
@@ -86,17 +98,45 @@ Kp=1
 Ki=0.5
 Kd=0.5
 
-def keepStraight():
-    global totalError
-    global prevError
-    leftValue=getDistance2()
-    rightValue=getDistance3()
-    error=rightValue-3.5
-    totalError+=error
-    errorDif=error-prevError
-    prevError=error
-    total=(Kp*error)+(Ki*totalError)+(Kd*errorDif)
-    return total
+'''
+i2c = board.I2C()  # uses board.SCL and board.SDA
+mpu = adafruit_mpu6050.MPU6050(i2c)
+
+def getAngle():
+    return calc()
+
+def notTurned90(a):    
+    return (abs(a-getAngle()) <= 90)
+
+def calc():
+    a1,a2=0,0
+    angle=initial
+    time1 =time.time()
+    time2 = time1
+
+    a1=a2
+    time1 = time2
+    time2 = time.time()
+    a2=mpu.gyro[2]
+    if -0.1<a2<0.1:
+        return 0
+    angle+=(180*(time2-time1)*(a1+a2)/(2*3.14))
+    #print("Acceleration: X:%.2f, Y: %.2f, Z: %.2f m/s^2" % (mpu.acceleration))
+    #print("Gyro X:%.2f, Y: %.2f, Z: %.2f rad/s" % (mpu.gyro))
+    #print("Temperature: %.2f C" % mpu.temperature)
+    print("Angle: %.2f degree " %angle)
+    time.sleep(0.0001)
+    return round(angle,2)
+'''
+def startUp():
+    if (GPIO.input(start)==GPIO.HIGH):
+        print("startUp")
+        return True
+    
+def reset():
+    if (GPIO.input(shortestpath)==GPIO.HIGH):
+        print("reset")
+        return True
 
 def orientation(orient,turning):
     if (turning== 'L'):
@@ -172,14 +212,20 @@ def getDistance1():
     time.sleep(0.00001)
     
     # Measure time
+    initialtime=time.time()
     while GPIO.input(PIN_ECHO1)==0:
+        #pass
         pulse1_start_time = time.time()
+        if (pulse1_start_time - initialtime > 0.005):
+            break
     while GPIO.input(PIN_ECHO1)==1:
         pulse1_end_time = time.time()
         
-
     # Calculate Distance
-    return round((pulse1_end_time - pulse1_start_time) * 17150, 2)        
+    try:
+        return round((pulse1_end_time - pulse1_start_time) * 17150, 2)
+    except:
+        return False       
     
 def getDistance2():
     
@@ -191,14 +237,20 @@ def getDistance2():
     time.sleep(0.00001)
     
     # Measure time
+    initialtime=time.time()
     while GPIO.input(PIN_ECHO2)==0:
+        #pass
         pulse2_start_time = time.time()
+        if (pulse2_start_time - initialtime > 0.005):
+            break
     while GPIO.input(PIN_ECHO2)==1:
         pulse2_end_time = time.time()
         
-
     # Calculate Distance
-    return round((pulse2_end_time - pulse2_start_time) * 17150, 2)
+    try:
+        return round((pulse2_end_time - pulse2_start_time) * 17150, 2)
+    except:
+        return False
 
 def getDistance3():
     
@@ -210,30 +262,67 @@ def getDistance3():
     time.sleep(0.00001)
     
     # Measure time
+    initialtime=time.time()
     while GPIO.input(PIN_ECHO3)==0:
+        #pass
         pulse3_start_time = time.time()
+        if (pulse3_start_time - initialtime > 0.005):
+            break
     while GPIO.input(PIN_ECHO3)==1:
         pulse3_end_time = time.time()
         
-
     # Calculate Distance
-    return round((pulse3_end_time - pulse3_start_time) * 17150, 2)
+    try:
+        return round((pulse3_end_time - pulse3_start_time) * 17150, 2)
+    except:
+        return False
+    
+def getDistance4():
+    
+    # Set trigger high
+    GPIO.output(PIN_TRIGGER4, GPIO.HIGH)
+    time.sleep(0.00001)
+    # Set trigger low
+    GPIO.output(PIN_TRIGGER4, GPIO.LOW)
+    time.sleep(0.00001)
+    
+    # Measure time
+    initialtime=time.time()
+    while GPIO.input(PIN_ECHO4)==0:
+        #pass
+        pulse4_start_time = time.time()
+        if (pulse4_start_time - initialtime > 0.005):
+            break
+    while GPIO.input(PIN_ECHO4)==1:
+        pulse4_end_time = time.time()
+        
+    # Calculate Distance
+    try:
+        return round((pulse4_end_time - pulse4_start_time) * 17150, 2)
+    except:
+        return False
 
 def wallFront():
-
-    if (getDistance1() < faceWallThreshold):
+    dis=getDistance1()
+    while(getDistance1()==False):
+        dis=getDistance1()
+    if (dis < faceWallThreshold):
         return True
     return False
 
 def wallRight():
-
-    if (getDistance3() < sideWallThreshold):
+    dis=getDistance3()
+    while(getDistance3()==False):
+        dis=getDistance3()
+    if (dis < sideWallThreshold):
         return True
     return False
 
 def wallLeft():
-
-    if (getDistance2() < sideWallThreshold):
+    dis=getDistance2()
+    while(getDistance2()==False):
+        dis=getDistance2()
+    if (dis < faceWallThreshold):
         return True
     return False
 
@@ -285,21 +374,34 @@ def holt(duration):
 
 def pause1(initial):
     while(True):
-        if((initial-getDistance1())>=11):
+        if((initial-getDistance1())>=15):
             break
     
 def pause2():
+    #prev=10
     while(True):
-        if(getDistance1()<=1.5):
+        if(getDistance1()<=2): #or prev<=1.5):
             break
+        #prev=getDistance1()
 
 def moveForward():
     log("moveforward");
 
-    duration = 0.299
     #correction=keepStraight()
     initialDistance=getDistance1()
-    error = getDistance2() - getDistance3()
+    #error = getDistance2() - getDistance3()
+    
+    #Uncomment above if does not work
+    dist2 = getDistance2()
+    if dist2 > 7:
+        dist2 = 3.5
+    dist3 = getDistance3()
+    if dist3 > 7:
+        dist3 = 3.5
+    
+    error = dist2 - dist3
+    #
+    
     leftSpeed, rightSpeed = PID.pid_controller(error)
     
     GPIO.output(DIR1,GPIO.HIGH)
@@ -317,11 +419,13 @@ def moveForward():
         pwm3.start(leftSpeed)#baseSpeed+correction)
         pwm4.start(rightSpeed)#baseSpeed-correction)    
     else:
-        pwm1.start(10)#baseSpeed+correction)
-        pwm2.start(10)#baseSpeed-correction)
-        pwm3.start(10)#baseSpeed+correction)
-        pwm4.start(10)#baseSpeed-correction)  
-
+        pwm1.start(30)#baseSpeed+correction)
+        pwm2.start(30)#baseSpeed-correction)
+        pwm3.start(30)#baseSpeed+correction)
+        pwm4.start(30)#baseSpeed-correction)  
+        time.sleep(0.02)
+        print("forward")
+        
     if(getDistance1()>16):
         pause1(initialDistance)
     else:
@@ -348,7 +452,7 @@ def moveForward():
 #def turnLeft():
 #    command(args=["turnLeft"], return_type=str)
 
-def turnRight(duration=0.25):
+def turnRight(duration=0.23):
     
     GPIO.output(DIR1,GPIO.HIGH)
     GPIO.output(DIR2,GPIO.LOW)
@@ -364,14 +468,15 @@ def turnRight(duration=0.25):
     pwm3.start(baseSpeed)
     pwm4.start(baseSpeed)
     
-    time.sleep(duration)
-    holt(1)
-    #initialAngle = getAngle()
+    #time.sleep(duration)
+    #holt(1)
+    '''
+    initialAngle = getAngle()
 
-    #while notTurned90(initialAngle):
-      #  time.sleep(0.01)
+    while notTurned90(initialAngle):
+        time.sleep(0.01)'''
       
-def turnLeft(duration=0.235): #0.25
+def turnLeft(duration=0.23): #0.25 #0.315
   
     GPIO.output(DIR1,GPIO.LOW)
     GPIO.output(DIR2,GPIO.HIGH)
@@ -389,10 +494,12 @@ def turnLeft(duration=0.235): #0.25
 
     time.sleep(duration)
     holt(1)
-    #initialAngle = getAngle()
+    '''
+    initialAngle = gyrooooo.getAngle()
 
-    #while notTurned90(initialAngle):
-     #   time.sleep(0.01)
+    while gyrooooo.notTurned90(initialAngle):
+        time.sleep(0.01)
+    '''
 
 def setWall(x, y, direction):
     command(args=["setWall", x, y, direction])
@@ -426,3 +533,4 @@ def ackReset():
 
 def log(string):
     sys.stderr.write("{}\n".format(string))
+
